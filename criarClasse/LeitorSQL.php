@@ -1,9 +1,12 @@
 <?php
+require_once ("classesModel.php");
+require_once ("classesView.php");
+//require_once ("classesControl.php");
 class LeitorSQL
 {
     private $conteudo;
     private $tabelas = [];
-    public function __construct($arquivo)
+    public function receberArquivoSQL($arquivo)
     {
         if (!file_exists($arquivo)) {
             throw new Exception("Arquivo não encontrado.");
@@ -14,18 +17,19 @@ class LeitorSQL
     private function processarTabelas()
     {
         preg_match_all(
-            '/CREATE TABLE `(.+?)` \((.*?)\)\s*ENGINE=/s',
+            '/CREATE TABLE\s+`([^`]+)`\s*\((.*?)\)\s*ENGINE=/s',
             $this->conteudo,
             $matches,
             PREG_SET_ORDER
         );
+
         foreach ($matches as $match) {
             $nomeTabela = $match[1];
             $camposTexto = $match[2];
             $this->tabelas[$nomeTabela] = [];
             $linhas = explode("\n", $camposTexto);
-            foreach ($linhas as $linha) {
 
+            foreach ($linhas as $linha) {
                 $linha = trim($linha);
                 if (strpos($linha, '`') !== 0) {
                     //  if (!str_starts_with($linha, '`')) {
@@ -54,46 +58,32 @@ class LeitorSQL
                 $this->tabelas[$tabela][$campoPK]['primary'] = true;
             }
         }
-         /*ALTER TABLE `aluno`
-          ADD CONSTRAINT `aluno_curso` FOREIGN KEY (`idcurso`) REFERENCES `curso` (`id`);*/
-
-        preg_match_all(
+       preg_match_all(
             '/ALTER TABLE `([^`]+)`\s+ADD CONSTRAINT `[^`]+`\s+
             FOREIGN KEY \(`([^`]+)`\)\s+REFERENCES `([^`]+)` \(`([^`]+)`\)/',
             $this->conteudo,
             $estrangeira,
             PREG_SET_ORDER
         );
-       echo "<pre>";
-        foreach($estrangeira as $fk){
-            echo "Tabela FK: " . $fk[1] . "\n";
-            echo "Campo FK: " . $fk[2] . "\n";
-            echo "Tabela Referenciada: " . $fk[3] . "\n";
-            echo "Campo Referenciado: " . $fk[4] . "\n\n";
-        }
-        echo "</pre>";
     }
-    function converterTipoPHP(string $tipoSQL): string
-    {
-        $tipoSQL = strtolower($tipoSQL);
-        $tipoSQL = preg_replace('/\(.*\)/', '', $tipoSQL);
-        return match($tipoSQL){
-            'int', 'bigint', 'smallint', 'tinyint' => 'int',
-            'varchar', 'char', 'text', 'longtext' => 'string',
-            'decimal', 'float', 'double' => 'float',
-            'date', 'datetime', 'timestamp' => 'string',
-            'bool', 'boolean' => 'bool',
-            default => 'mixed'
-        };
-    }
- public function getTabelas()  {
-        return array_keys($this->tabelas);
-    }
-    public function getAtributos($tabela) {
-        if (!isset($this->tabelas[$tabela])) {
-            return [];
-    }
-        return $this->tabelas[$tabela];
-    }
+
+ function  iniciar()
+  {
+      $arquivo = $_FILES['arquivo'];
+      $arquivo_tmp = $arquivo['tmp_name'];
+      $arquivo_size = $arquivo['size'];
+      $arquivo_name = explode('.', $arquivo['name']);
+      $extensao = strtolower(end($arquivo_name));
+      if ($extensao != "sql") {
+          header("location: index.php?erro=0");
+      } else {
+          move_uploaded_file($arquivo_tmp, $arquivo["name"]);
+          $this->receberArquivoSQL($arquivo["name"]);
+          new classesModel($this->tabelas);
+          new classesView($this->tabelas);
+         
+      }
+  }
 }
+(new LeitorSQL())->iniciar();
 ?>
