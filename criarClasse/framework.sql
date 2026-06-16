@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 18/05/2026 às 22:48
+-- Tempo de geração: 12/05/2026 às 14:25
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.0.30
 
@@ -31,7 +31,7 @@ CREATE TABLE `aluno` (
   `id` int(11) NOT NULL,
   `nome` varchar(30) NOT NULL,
   `nascimento` date NOT NULL,
-  `idcurso` int(11) NOT NULL
+  `curso` varchar(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -66,8 +66,7 @@ CREATE TABLE `professor` (
 -- Índices de tabela `aluno`
 --
 ALTER TABLE `aluno`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `aluno_curso` (`idcurso`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Índices de tabela `curso`
@@ -102,16 +101,6 @@ ALTER TABLE `curso`
 --
 ALTER TABLE `professor`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `aluno`
---
-ALTER TABLE `aluno`
-  ADD CONSTRAINT `aluno_curso` FOREIGN KEY (`idcurso`) REFERENCES `curso` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
