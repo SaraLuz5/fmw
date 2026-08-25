@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste do Nosso Framework AJAX</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #resultado { margin-top: 15px; padding: 10px; border: 1px dashed #ccc; }
+    </style>
+</head>
+<body>
+<h2>Mini-Framework AJAX</h2>
+<button app-url="dados.php" app-target="#resultado" app-event="click">
+    <!--app-url-> qnd clicar no botão vai levar para dados.php
+    app-target-> onde o resultado tem q ser aberto
+    app-event -> quais eventos vão acontecer-->
+    Carregar Horário do Servidor
+</button>
+<div id="resultado">O conteúdo do PHP vai aparecer aqui...</div>
+<h3>Buscar Usuários</h3>
+
+<!-- parte 2 -->
+<input type="text"
+       name="busca"
+       placeholder="Digite um nome..."
+       app-url="buscar.php"
+       app-target="#resultado-busca"
+       app-event="keyup">
+
+<div id="resultado-busca">Aguardando busca...</div>
+
+<!-- Parte 3 -->
+
+<h3>Filtro Dinâmico: Estado e Cidade</h3>
+
+<label for="estado">Estado:</label>
+<select id="estado"
+        name="estado"
+        app-url="cidades.php"
+        app-target="#cidade"
+        app-event="change">
+    <option value="">Selecione um estado...</option>
+    <option value="SP">São Paulo</option>
+    <option value="RJ">Rio de Janeiro</option>
+    <option value="PR">Paraná</option>
+</select>
+
+<br><br>
+
+<label for="cidade">Cidade:</label>
+<select id="cidade">
+    <option value="">Selecione um estado primeiro...</option>
+</select>
+<script src="app-ajax.js"></script>
+</body>
+</html>
